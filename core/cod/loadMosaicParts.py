@@ -2,18 +2,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import cv2
+from params import Params
 
-def loadMosaicParts(params):
-
+def loadMosaicParts():
 
     dirPath = '../data/colectie'
 
     print ('Incarcam piesele pentru mozaic din director \n')
 
-    if (params['category'] == 0) :
+    if (Params.category == 0) :
         dirPath = '../data/colectie'
-    if (params['category'] != 0) :
-        dirPath = '../data/cifar-images/' + str(params['category'])
+    if (Params.category != 0) :
+        dirPath = '../data/cifar-images/' + str(Params.category)
 
     files = os.listdir(dirPath)
 
@@ -41,7 +41,7 @@ def loadMosaicParts(params):
         index += 1
 
 
-    if params['showMosaicParts'] != 0:
+    if Params.showMosaicParts != 0:
         #afiseaza primele 100 de piese ale mozaicului
         plt.figure()
         plt.title('Primele 100 de piese ale mozaicului sunt:')
@@ -54,5 +54,4 @@ def loadMosaicParts(params):
                 #drawnow(pieseMozaic[:,:,:,idxImg])
                 plt.pause(2)
 
-    params['pieseMozaic'] = pieseMozaic
-    return params
+    Params.pieseMozaic = pieseMozaic

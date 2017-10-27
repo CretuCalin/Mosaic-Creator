@@ -1,93 +1,95 @@
 import numpy as np
 from random import randint
 import cv2
+from params import Params
+
 
 indexMatrix = None
 
-def adaugaPieseMozaicPeCaroiaj(params):
+def adaugaPieseMozaicPeCaroiaj():
 
     global indexMatrix
-    imgMozaic = np.uint8(np.zeros(np.shape(params['imgReferintaRedimensionata'])))
-    indexMatrix = [[-1 for x in range(params['numberMosaicPartsHorizontal'] + 2)] for y in range(params['numberMosaicPartsVertical'] +2)]
+    imgMozaic = np.uint8(np.zeros(np.shape(Params.imgReferintaRedimensionata)))
+    indexMatrix = [[-1 for x in range(Params.numberMosaicPartsHorizontal + 2)] for y in range(Params.numberMosaicPartsVertical + 2)]
     indexMatrix = np.asarray(indexMatrix)
 
     imgMozaic = np.asarray(imgMozaic)
 
-    [N,H,W,C] = np.shape(params['pieseMozaic'])
-    [h,w,c] = np.shape(params['imgReferintaRedimensionata'])
+    [N,H,W,C] = np.shape(Params.pieseMozaic)
+    [h,w,c] = np.shape(Params.imgReferintaRedimensionata)
 
 
-    nrTotalPiese = params['numberMosaicPartsHorizontal'] *params['numberMosaicPartsVertical']
+    nrTotalPiese = Params.numberMosaicPartsHorizontal * Params.numberMosaicPartsVertical
     nrPieseAdaugate = 0
 
 
-    if params['criterion'] == 'aleator':
+    if Params.criterion == 'aleator':
 
 
-        for i in range(1,params['numberMosaicPartsVertical']):
-            for j in range(1,params['numberMosaicPartsHorizontal']):
+        for i in range(1,Params.numberMosaicPartsVertical):
+            for j in range(1,Params.numberMosaicPartsHorizontal):
                 #alege un indice aleator din cele N
 
                 indice = randint(0,N-1)
 
 
                 imgMozaic[(i-1)*H : i*H ,(j-1)*W : j*W, :] = \
-                    params['pieseMozaic'][indice][:][:][:]
+                    Params.pieseMozaic[indice][:][:][:]
 
 
-
+ 
                 nrPieseAdaugate = nrPieseAdaugate+1
 
-            print ('Construim mozaic ... #2.2f## \n',100*nrPieseAdaugate/nrTotalPiese)
+            print ("Construim mozaic ... #2.2f## \n",100*nrPieseAdaugate/nrTotalPiese)
 
-    elif params['criterion'] == 'distantaCuloareMedie':
-        avgColorList = computeAverageColorForAList(params)
-        for i in range(1,params['numberMosaicPartsVertical'] + 1):
-            for j in range(1,params['numberMosaicPartsHorizontal'] + 1):
+    elif Params.criterion == 'distantaCuloareMedie':
+        avgColorList = computeAverageColorForAList()
+        for i in range(1,Params.numberMosaicPartsVertical + 1):
+            for j in range(1,Params.numberMosaicPartsHorizontal + 1):
 
-                if params['identicalMatchingPieces'] == 1:
-                    indice = findAverageColor(params['imgReferintaRedimensionata'][(i-1)*H : i*H ,(j-1)*W : j*W, :]
+                if Params.identicalMatchingPieces == 1:
+                    indice = findAverageColor(Params.imgReferintaRedimensionata[(i-1)*H : i*H ,(j-1)*W : j*W, :]
                                               ,avgColorList)
                 else :
-                    indice = findAverageColor(params['imgReferintaRedimensionata'][(i-1)*H : i*H ,(j-1)*W : j*W, :]
+                    indice = findAverageColor(Params.imgReferintaRedimensionata[(i-1)*H : i*H ,(j-1)*W : j*W, :]
                                           ,avgColorList,i-1,j-1)
 
                 imgMozaic[(i-1)*H : i*H ,(j-1)*W : j*W, :] = \
-                    params['pieseMozaic'][indice][:][:][:]
+                    Params.pieseMozaic[indice][:][:][:]
 
                 nrPieseAdaugate = nrPieseAdaugate+1
 
-            print ('Construim mozaic ...%i \% \n',100*nrPieseAdaugate/nrTotalPiese)
+            print ("Construim mozaic ...%i % \n",100*nrPieseAdaugate/nrTotalPiese)
 
     else :
-        print ('EROARE, optiune necunoscuta \n')
+        print ("EROARE, optiune necunoscuta \n")
 
     return imgMozaic
 
 
-def adaugaPieseMozaicModAleator(params) :
+def adaugaPieseMozaicModAleator() :
 
-    imgMozaic = np.uint8(np.zeros(np.shape(params['imgReferintaRedimensionata'])))
+    imgMozaic = np.uint8(np.zeros(np.shape(Params.imgReferintaRedimensionata)))
 
 
     imgMozaic = np.asarray(imgMozaic)
 
-    [N,H,W,C] = np.shape(params['pieseMozaic'])
-    [h,w,c] = np.shape(params['imgReferintaRedimensionata'])
+    [N,H,W,C] = np.shape(Params.pieseMozaic)
+    [h,w,c] = np.shape(Params.imgReferintaRedimensionata)
 
 
-    nrTotalPiese = params['numberMosaicPartsHorizontal'] *params['numberMosaicPartsVertical']
+    nrTotalPiese = Params.numberMosaicPartsHorizontal * Params.numberMosaicPartsVertical
 
     nrPieseAdaugate = 0
 
 
-    if params['criterion'] == 'distantaCuloareMedie':
-        avgColorList = computeAverageColorForAList(params)
+    if Params.criterion == 'distantaCuloareMedie':
+        avgColorList = computeAverageColorForAList()
 
         nrTraversari = 1
 
-        rangeH = params['numberMosaicPartsVertical'] * H - H
-        rangeW = params['numberMosaicPartsHorizontal'] * W - W
+        rangeH = Params.numberMosaicPartsVertical * H - H
+        rangeW = Params.numberMosaicPartsHorizontal * W - W
 
         numarTotalGenerari = nrTotalPiese * nrTraversari
         for i in range(0, numarTotalGenerari):
@@ -95,18 +97,18 @@ def adaugaPieseMozaicModAleator(params) :
             i = randint(0,rangeH)
             j = randint(0,rangeW)
 
-            indice = findAverageColor(params['imgReferintaRedimensionata']
+            indice = findAverageColor(Params.imgReferintaRedimensionata
                                       [i : i + H, j : j + W, :],avgColorList)
 
 
             imgMozaic[i : i + H, j : j + W, :] = \
-                params['pieseMozaic'][indice][:][:][:]
+                Params.pieseMozaic[indice][:][:][:]
 
             nrPieseAdaugate = nrPieseAdaugate+1
 
-            print ('Construim mozaic \n',100*nrPieseAdaugate/numarTotalGenerari)
+            print ("Construim mozaic \n",100*nrPieseAdaugate/numarTotalGenerari)
     else :
-        print ('EROARE, optiune necunoscuta \n')
+        print ("EROARE, optiune necunoscuta \n")
 
     return imgMozaic
 
@@ -160,14 +162,14 @@ def findAverageColor(img, avgImgList, indexH = -1, indexW = -1):
         return _index
 
 
-def computeAverageColorForAList(params):
+def computeAverageColorForAList():
 
-    [N,H,W,C] = np.shape(params['pieseMozaic'])
+    [N,H,W,C] = np.shape(Params.pieseMozaic)
     average_color = []
 
     for i in range(0,N - 1):
 
-            image = params['pieseMozaic'][i][:][:][:]
+            image = Params.pieseMozaic[i][:][:][:]
             avg_color = [image[:, :, i].mean() for i in range(image.shape[-1])]
 
             average_color.append(avg_color)

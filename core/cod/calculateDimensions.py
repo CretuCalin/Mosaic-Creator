@@ -1,22 +1,17 @@
 import numpy as np
 import cv2
+from params import Params
 
-def calculateDImensions(params):
-
-
-
+def calculateDimensions():
     [piesaH,piesaW,canal] = \
-        np.shape(params['pieseMozaic'][0])
-    [refH,refW,canal] = np.shape(params['refImage'])
+        np.shape(Params.pieseMozaic[0])
+    [refH,refW,canal] = np.shape(Params.refImage)
 
-    rezW = params['numberMosaicPartsHorizontal']*piesaW
+    rezW = Params.numberMosaicPartsHorizontal*piesaW
     scara = rezW / refW
     rezH = refH*scara
     
-    params['numberMosaicPartsVertical'] = int (np.floor(rezH/piesaH))
-    H = params['numberMosaicPartsVertical'] * piesaH
-    W = params['numberMosaicPartsHorizontal'] * piesaW
-    params['imgReferintaRedimensionata'] = cv2.resize(params['refImage'], (W,H))
-
-
-    return params
+    Params.numberMosaicPartsVertical = int (np.floor(rezH/piesaH))
+    H = Params.numberMosaicPartsVertical * piesaH
+    W = Params.numberMosaicPartsHorizontal * piesaW
+    Params.imgReferintaRedimensionata = cv2.resize(Params.refImage, (W,H))

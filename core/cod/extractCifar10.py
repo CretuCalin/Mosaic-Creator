@@ -39,4 +39,4 @@ for i in range(0,imgarray.shape[0]):
     category = (int)(category[0])
     cats.append(categories[category])
     saveCifarImage(imgarray[i],"../data/cifar-images/" + str(category + 1) + "/", "image"+(str)(i))
-print cats
+print categories
