@@ -62,3 +62,9 @@ CVS
 *.mode2v3
 *.perspectivev3
 xcuserdata/
+
+# Other Data #
+##############
+*.jpg
+*.jpeg
+*.png

@@ -1,6 +1,5 @@
 import numpy as np
 from random import randint
-import random
 import cv2
 from params import Params
 
