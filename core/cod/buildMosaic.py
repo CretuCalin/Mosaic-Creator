@@ -11,7 +11,7 @@ def buildMosaic():
 
     if Params.arrangingWay == 'caroiaj':
         imgMozaic = addMosaicParts.adaugaPieseMozaicPeCaroiaj()
-    elif params.arrangingWay == 'aleator':
+    elif Params.arrangingWay == 'aleator':
         imgMozaic = addMosaicParts.adaugaPieseMozaicModAleator()
     else :
         print "Alege un mod de generare"

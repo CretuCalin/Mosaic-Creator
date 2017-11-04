@@ -3,7 +3,6 @@ from random import randint
 import cv2
 from params import Params
 
-
 indexMatrix = None
 
 def adaugaPieseMozaicPeCaroiaj():
@@ -66,32 +65,61 @@ def adaugaPieseMozaicPeCaroiaj():
 
     return imgMozaic
 
-
 def adaugaPieseMozaicModAleator() :
 
     imgMozaic = np.uint8(np.zeros(np.shape(Params.imgReferintaRedimensionata)))
-
 
     imgMozaic = np.asarray(imgMozaic)
 
     [N,H,W,C] = np.shape(Params.pieseMozaic)
     [h,w,c] = np.shape(Params.imgReferintaRedimensionata)
 
-
-    nrTotalPiese = Params.numberMosaicPartsHorizontal * Params.numberMosaicPartsVertical
-
     nrPieseAdaugate = 0
 
+    avgColorList = computeAverageColorForAList()
 
-    if Params.criterion == 'distantaCuloareMedie':
-        avgColorList = computeAverageColorForAList()
+    nrTraversari = Params.nrTraversari
 
-        nrTraversari = 1
+    rangeH = h - H
+    rangeW = w - W
 
-        rangeH = Params.numberMosaicPartsVertical * H - H
-        rangeW = Params.numberMosaicPartsHorizontal * W - W
+    if Params.randCriterion == 'tryHard':
+        
+        mozaicEmpty = {(row * rangeW + col) : (row,col) for row in range(0,rangeH) for col in range(0,rangeW)}
+
+        pixelsToFill = rangeH * rangeW
+
+        while mozaicEmpty :
+
+
+            #get a random block to fill from the empty blocks list
+            randomIndex = randint(0,pixelsToFill)
+
+            if randomIndex not in mozaicEmpty:
+                continue
+
+            (i, j) = mozaicEmpty[randomIndex]
+
+            indice = findAverageColor(Params.imgReferintaRedimensionata
+                                      [i : i + H, j : j + W, :],avgColorList)
+
+            imgMozaic[i : i + H, j : j + W, :] = \
+                Params.pieseMozaic[indice][:][:][:]
+
+            #mark the previously empty block as full
+            for row in range(i ,(i + H + 1)) :
+                for col in range(j, (j + W + 1)) :
+                    if randomIndex in mozaicEmpty :
+                        del(mozaicEmpty[randomIndex])
+
+            print("Construim mozaic \n", len(mozaicEmpty) )
+
+    elif Params.randCriterion == 'stochastic':
+
+        nrTotalPiese = Params.numberMosaicPartsHorizontal * Params.numberMosaicPartsVertical
 
         numarTotalGenerari = nrTotalPiese * nrTraversari
+
         for i in range(0, numarTotalGenerari):
 
             i = randint(0,rangeH)
@@ -100,11 +128,10 @@ def adaugaPieseMozaicModAleator() :
             indice = findAverageColor(Params.imgReferintaRedimensionata
                                       [i : i + H, j : j + W, :],avgColorList)
 
-
             imgMozaic[i : i + H, j : j + W, :] = \
                 Params.pieseMozaic[indice][:][:][:]
 
-            nrPieseAdaugate = nrPieseAdaugate+1
+            nrPieseAdaugate = nrPieseAdaugate + 1
 
             print ("Construim mozaic \n",100*nrPieseAdaugate/numarTotalGenerari)
     else :
@@ -160,7 +187,6 @@ def findAverageColor(img, avgImgList, indexH = -1, indexW = -1):
         indexMatrix[indexH][indexW] = _index
 
         return _index
-
 
 def computeAverageColorForAList():
 

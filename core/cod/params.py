@@ -31,10 +31,21 @@ class Params(object):
 	showMosaicParts= 0
 
 	#how the pieces will be arranged on the mozaic - 'caroiaj' or 'aleator'
-	arrangingWay = 'caroiaj'
+	arrangingWay = 'aleator'
 
 	#the criterion on which the pieces will be arranged on the mozaic - 'distantaCuloareMedie' or 'aleator'
 	criterion = 'distantaCuloareMedie'
+
+	# the criterion on which we choose to stop when assigning random pieces : 'stochastic' or 'tryHard'
+	# if stochastic, script will make a specific number of traversals of the matrix pixels, trying to 
+	#match them all with randoms. 
+	# if tryHard, script will run until all positions are filled, no exceptions. Needs lots of twitching. 
+	#not running at practical speeds
+	randCriterion = 'tryHard'
+
+	# applies to stochastic randCriterion. 6 or 8 is a pretty good number, with a 95% fill rate.
+	# 20 will go at almost 100% ( Avg. 30 minutes)
+	nrTraversari = 1
 	
 	identicalMatchingPieces = 1
 
